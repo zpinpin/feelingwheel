@@ -1,0 +1,280 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<h1>Feeling Wheel</h1>
+        <div id="stack">
+            <canvas id="picker" width="1800" height="1800"></canvas>
+            <canvas id="hit" width="1800" height="1800"></canvas>
+        <div>
+	    <script>
+		    const canvas = document.getElementById("picker");
+            const ctx = canvas.getContext("2d");
+
+            // We're going to create a seperate canvas for hit detection
+            const hitCanvas = document.getElementById('hit');
+            const hitCtx = hitCanvas.getContext('2d');
+
+            // This is our inner ring blocks
+            let innerText = `[ { "text" : "Powerful", "color" : "rgba(0,0,255,1)"     },
+                               { "text" : "Joyful"  , "color" : "rgba(255,165,0,1)"   },
+                               { "text" : "Sad"     , "color" : "rgba(0,128,0,1)"     },
+                               { "text" : "Mad"     , "color" : "rgba(255,0,0,1)"     },
+                               { "text" : "Scared"  , "color" : "rgba(128,128,128,1)" },
+                               { "text" : "Peaceful", "color" : "rgba(255,255,0,1)"   } ]`;
+
+            let outerText = `[ { "text" : "Faithful"   , "color" : "" },
+                               { "text" : "Important"  , "color" : "" },
+                               { "text" : "Appreciated", "color" : "" },
+                               { "text" : "Respected"  , "color" : "" },
+                               { "text" : "Proud"      , "color" : "" },
+                               { "text" : "Aware"      , "color" : "" },
+                               { "text" : "Excited"    , "color" : "" },
+                               { "text" : "Sensuous"   , "color" : "" },
+                               { "text" : "Energetic"  , "color" : "" },
+                               { "text" : "Cheerful"   , "color" : "" },
+                               { "text" : "Creative"   , "color" : "" },
+                               { "text" : "Hopeful"    , "color" : "" },
+                               { "text" : "Tired"      , "color" : "" },
+                               { "text" : "Bored"      , "color" : "" },
+                               { "text" : "Lonely"     , "color" : "" },
+                               { "text" : "Depressed"  , "color" : "" },
+                               { "text" : "Ashamed"    , "color" : "" },
+                               { "text" : "Guilty"     , "color" : "" },
+                               { "text" : "Hurt"       , "color" : "" },
+                               { "text" : "Hostile"    , "color" : "" },
+                               { "text" : "Angry"      , "color" : "" },
+                               { "text" : "Selfish"    , "color" : "" },
+                               { "text" : "Hateful"    , "color" : "" },
+                               { "text" : "Critical"   , "color" : "" },
+                               { "text" : "Confused"   , "color" : "" },
+                               { "text" : "Rejected"   , "color" : "" },
+                               { "text" : "Helpless"   , "color" : "" },
+                               { "text" : "Submissive" , "color" : "" },
+                               { "text" : "Insecure"   , "color" : "" },
+                               { "text" : "Anxious"    , "color" : "" },
+                               { "text" : "Content"    , "color" : "" },
+                               { "text" : "Thoughtful" , "color" : "" },
+                               { "text" : "Intimate"   , "color" : "" },
+                               { "text" : "Loving"     , "color" : "" },
+                               { "text" : "Trusting"   , "color" : "" },
+                               { "text" : "Nurturing"  , "color" : "" } ]`;
+
+            let outer2Text = `[ { "text" : "Confident"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Discerning"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Valuable"     , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Worthwhile"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Successful"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Surprised"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Optimistic"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Playful"      , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Amused"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Stimulated"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Fascinated"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Daring"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Sleepy"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Apathetic"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Isolated"     , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Inferior"     , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Stupid"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Remorseful"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Distant"      , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Sarcastic"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Frustrated"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Jealous"      , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Irritated"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Skeptical"    , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Bewildered"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Discouraged"  , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Insignificant", "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Inadequate"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Embarrassed"  , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Overwhelmed"  , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Relaxed"      , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Pensive"      , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Responsive"   , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Serene"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Secure"       , "color" : "" },
+                                { "text" : ""             , "color" : "" },
+                                { "text" : "Thankful"     , "color" : "" },
+                                { "text" : ""             , "color" : "" } ]`;
+
+            const innerObj = JSON.parse(innerText);
+            const outerObj = JSON.parse(outerText);
+            const outer2Obj = JSON.parse(outer2Text);
+
+            // Setup our colors (ignore what's in the JSON above)
+            for (let a = 0; a < innerObj.length; ++a) {
+                let h = a*(360/innerObj.length);
+                let s = 50;
+                let l = 50;
+
+                innerObj[a].color = `hsla(${h},${s}%,${l}%,1)`;
+
+                for (let b = 0; b < 6; ++b) {
+                    let idx = a*6 + b;
+                    let s = 55 + b*50/6;
+                    outerObj[idx].color = `hsla(${h},${s}%,${l}%,1)`;
+
+                    for (let c = 0; c < 12; ++c) {
+                        let idx = a*12 + c;
+                        let l = 55 + c*45/12;
+                        outer2Obj[idx].color = `hsla(${h},${s}%,${l}%,1)`;
+                    }
+                }
+            }
+
+            // First set of calls do the drawing
+            pieChart(outer2Obj,'14pt verdana',ctx,550,550,500,0);
+            pieChart(outerObj,'14pt verdana',ctx,550,550,300,0);
+            pieChart(innerObj,'20pt verdana',ctx,550,550,150,0);
+
+            // Second set of calls setup the hit detection
+            pieChart(outer2Obj,'14pt verdana',hitCtx,550,550,500,3);
+            pieChart(outerObj,'14pt verdana',hitCtx,550,550,300,2);
+            pieChart(innerObj,'20pt verdana',hitCtx,550,550,150,1);
+
+            // This one got rotated. Set it back
+            ctx.translate(0,0);
+            ctx.rotate(0);
+
+            canvas.addEventListener('click', (e) => {
+                const mousePos = {
+                    x: e.clientX - canvas.offsetLeft,
+                    y: e.clientY - canvas.offsetTop
+                };
+
+                const pixel = hitCtx.getImageData(mousePos.x, mousePos.y, 1, 1).data;
+
+                console.log("pixel=", pixel);
+
+                var text = "nothing";
+
+                if (pixel[0] == 1)
+                    text = innerObj[pixel[1]].text;
+                else if (pixel[0] == 2)
+                    text = outerObj[pixel[1]].text;
+                else if (pixel[0] == 3) {
+                    text = outer2Obj[pixel[1]].text;
+                    if (text == "")
+                        text = `Outer ring, offset from ${outer2Obj[pixel[1] - 1].text}`
+                }
+
+                alert(`You clicked on ${text}`);
+            });
+
+            // Draw label for piechart arc
+            function drawLabel(text,fnt,ctx,cx,cy,r,angle,align) {
+
+                // We're going to do the text label now
+                ctx.save();
+                ctx.strokeStyle = "rgb(0,0,0)";
+                ctx.fillStyle = "rgb(0,0,0)";
+
+                var dx = 0;
+                var dy = 0;
+
+                if (align == "right") {
+                    dx = r - 10;
+                    dy = Math.floor(r*0.05);
+                }
+
+                ctx.translate(cx,cy);
+                ctx.rotate(angle*Math.PI);
+
+                ctx.textAlign = align;
+                ctx.font = fnt;
+                ctx.fillText(text,dx,dy);
+                ctx.restore();
+
+            } // drawLabel
+
+            // Draw a piechart (this version assumes equal weighting to all arcs; it does not support different arc sizes
+            // Arguments:
+            //  Labels, font, context, x-coordinate of center of pie chart, y-coordinate of center of pie chart, radius to use, hit indicator (if 0, draw, if >0, setup hit detection
+            function pieChart(input,fnt,ctx,cx,cy,r,hitd) {
+
+                // Arcs go from 0 to 2 PI
+                // If we have an even # of labels, awesome! We can start at 0
+                // If we have an odd # of labels, boo! We have to start somewhere between 1.5 & 0.
+
+                var startAngle = input.length%2 == 0 ? 0 : 2 - 2/input.length;
+                var arcAngleW  = 2/input.length;
+
+                for (let i = 0; i < input.length; ++i) {
+                    var endAngle = startAngle + arcAngleW;
+                    if (endAngle > 2)
+                        endAngle -= 2;
+                    ctx.beginPath();
+                    ctx.moveTo(cx,cy);
+                    ctx.arc(cx,cy,r,startAngle*Math.PI,endAngle*Math.PI,false);
+                    // ctx.closePath();
+
+                    if (hitd == 0)
+                        ctx.fillStyle = input[i].color;
+                    else {
+                         ctx.fillStyle = `rgb(${hitd},${i},0)`;
+                         console.log(`Hit color for ${hitd}:${i} is ${ctx.fillStyle}`);
+                    }
+
+                    ctx.fill();
+
+                    if (hitd == 0) {
+
+                        // let doflip = startAngle > 0.5 && startAngle < 1.5;
+                        let doflip = false;
+
+                        if (!doflip) {
+                            drawLabel(input[i].text,fnt,ctx,cx,cy,r,startAngle + arcAngleW*0.3,"right");
+                        } else {
+                            var x = cx - Math.cos(startAngle + arcAngleW*0.3)*r;
+                            var y = cy + Math.sin(startAngle + arcAngleW*0.3)*r;
+                            console.log("label ",input[i].text," cx=",cx,", cy=",cy,",x=",x,",y=",y);
+                            drawLabel(input[i].text,fnt,ctx,x,y,r,startAngle + 1 + arcAngleW*0.3,"left");
+                        }
+
+                    } // if : Draw label, unless we're setting up hit detection
+
+                    startAngle += arcAngleW;
+                    if (startAngle > 2)
+                        startAngle -= 2;
+                }
+
+            } // pieChart
+        </script>
+    </body>
+</html>
